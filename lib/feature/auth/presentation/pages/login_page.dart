@@ -5,7 +5,8 @@ import 'package:uat_project/feature/auth/presentation/components/my_textfield.da
 import '../components/my_button.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final void Function()? togglePages;
+  const LoginPage({super.key, this.togglePages});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -18,13 +19,14 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(title: const Text('Login', style: TextStyle(
+          color: Colors.indigo, fontWeight: FontWeight.bold))),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0),
         child: Center(
           child: Column(
               children: [
-              Icon(Icons.lock_open, size: 75),
+              Icon(Icons.lock_open, size: 75,  color: Colors.indigo),
           const SizedBox(height: 25),
           MyTextField(
             controller: emailController,
@@ -57,10 +59,15 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('Do not have an account? '),
-            Text(
-              "Register now",
-              style: TextStyle(
-                  color: Colors.indigo, fontWeight: FontWeight.bold),
+            GestureDetector(
+              onTap: widget.togglePages,
+
+              child: Text(
+                "Register now",
+                style: TextStyle(
+                    backgroundColor: Colors.indigo.shade50,
+                    color: Colors.indigo, fontWeight: FontWeight.bold),
+              ),
             ),
           ],
         ),

@@ -3,6 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:uat_project/feature/auth/presentation/pages/login_page.dart';
 import 'package:uat_project/firebase_options.dart';
 
+import 'feature/auth/presentation/pages/auth_page.dart';
+import 'feature/auth/presentation/pages/register_page.dart';
+
 void main() async{
   //firebase setup
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +21,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: LoginPage(),
+      home: AuthPage(),
     );
   }
 }
