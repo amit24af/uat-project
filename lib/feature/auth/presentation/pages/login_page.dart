@@ -1,8 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:uat_project/feature/auth/presentation/components/my_textfield.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uat_project/feature/auth/presentation/cubits/auth_cubit.dart';
 
 import '../components/my_button.dart';
+import '../components/my_textfield.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function()? togglePages;
@@ -15,6 +16,22 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final emailController = TextEditingController();
   final pwController = TextEditingController();
+
+  void login(){
+    final String email = emailController.text;
+    final String pw = pwController.text;
+
+    final authCubit =  context.read<AuthCubit>();
+
+    if(email.isNotEmpty && pw.isNotEmpty){
+      authCubit.login(email, pw);
+    }else{
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter both email & password")));
+    }
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
             ],
           ),
           const SizedBox(height: 25),
-          MyButton(onTap: () {}, text: 'Login'),
+          MyButton(onTap: login, text: 'Login'),
           const SizedBox(height: 25),
           Row(
           mainAxisAlignment: MainAxisAlignment.center,

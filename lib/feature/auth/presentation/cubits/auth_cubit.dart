@@ -54,6 +54,7 @@ class AuthCubit extends Cubit<AuthState> {
       }
 
     } catch(e){
+      print("GREŠKA REGISTRACIJE: $e");
       emit(AuthError(e.toString()));
       emit(Unauthenticated());
     }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uat_project/feature/auth/presentation/cubits/auth_cubit.dart';
 
 import '../components/my_button.dart';
 import '../components/my_textfield.dart';
@@ -16,6 +18,33 @@ class _RegisterPageState extends State<RegisterPage> {
   final pwController = TextEditingController();
   final confirmPwController = TextEditingController();
   final nameController = TextEditingController();
+
+  void register(){
+    final String name = nameController.text;
+    final String email = emailController.text;
+    final String pw =  pwController.text;
+    final String confirmPw =  confirmPwController.text;
+
+    final authCubit = context.read<AuthCubit>();
+
+    if(email.isNotEmpty && name.isNotEmpty && pw.isNotEmpty && confirmPw.isNotEmpty){
+      if(pw == confirmPw){
+        authCubit.register(name, email, pw);
+      }else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Passwords do not match!")));
+      }
+    } else{
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Complete all fields, please!")));
+    }
+  }
+  @override
+  void dispose(){
+    nameController.dispose();
+    emailController.dispose();
+    pwController.dispose();
+    confirmPwController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +84,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
 
               const SizedBox(height: 25),
-              MyButton(onTap: () {}, text: 'Sign Up'),
+              MyButton(onTap: register, text: 'Sign Up'),
               const SizedBox(height: 25),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
