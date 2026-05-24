@@ -28,34 +28,33 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-        providers: [
-          BlocProvider(
-              create: (context) => AuthCubit(authRepo: firebaseAuthRepo)..checkAuth(),
-          )
-        ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          home: BlocConsumer<AuthCubit, AuthState>(
-              builder: (context, state){
-                print(state);
+      providers: [
+        BlocProvider(
+          create: (context) => AuthCubit(authRepo: firebaseAuthRepo)..checkAuth(),
+        )
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: BlocConsumer<AuthCubit, AuthState>(
+            builder: (context, state){
+              print(state);
 
-                if(state is Unauthenticated){
-                  return const AuthPage();
-                }
-                if(state is Authenticated){
-                  return const HomePage();
-                } else {
-                  return LoadingScreen();
-                }
+              if(state is Unauthenticated){
+                return const AuthPage();
+              }
+              if(state is Authenticated){
+                return const HomePage();
+              } else {
+                return LoadingScreen();
+              }
 
-              }, listener: (context, state){
-                if(state is AuthError){
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message),));
-                }
-          }),
-        ),
+            }, listener: (context, state){
+          if(state is AuthError){
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message),));
+          }
+        }),
+      ),
     );
   }
 }
-
 
