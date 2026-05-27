@@ -23,14 +23,14 @@ class FirebaseAuthRepo implements AuthRepo{
     // no logged in user
     if (firebaseUser == null) return null;
     // logged in user exists
-    return AppUser(uid: firebaseUser.uid, email: firebaseUser.email!);
+    return AppUser(uid: firebaseUser.uid, email: firebaseUser.email!, name: '');
   }
 
   @override
   Future<AppUser?> loginWithEmailPassword(String email, String password) async {
     try{
       UserCredential userCredential = await firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
-      AppUser user = AppUser(uid: userCredential.user!.uid, email: email);
+      AppUser user = AppUser(uid: userCredential.user!.uid, email: email, name: '');
 
       return user;
     }catch (e) {
@@ -48,7 +48,7 @@ class FirebaseAuthRepo implements AuthRepo{
     // TODO: implement registerWithEmailPassword
     try {
       UserCredential userCredential = await firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
-      AppUser user = AppUser(uid: userCredential.user!.uid, email: email);
+      AppUser user = AppUser(uid: userCredential.user!.uid, email: email, name: '');
       return user;
     } catch (e){
       throw Exception('Registration failed: $e');
