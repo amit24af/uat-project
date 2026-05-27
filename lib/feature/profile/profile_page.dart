@@ -22,7 +22,7 @@ class ProfilePage extends StatelessWidget {
                 size: 80,
               ),
             ),
-            Text(currentUser!.email)
+            Text(currentUser!.name)
           ]
         ),
       )

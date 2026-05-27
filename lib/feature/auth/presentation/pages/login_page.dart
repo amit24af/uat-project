@@ -36,7 +36,9 @@ class _LoginPageState extends State<LoginPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Forgot Password"),
+        title: Text("Forgot Password",style: TextStyle(
+          color: Theme.of(context).colorScheme.inversePrimary,
+        )),
         content: MyTextField(
           controller: emailController,
           hintText: "Enter email...",
@@ -45,7 +47,9 @@ class _LoginPageState extends State<LoginPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: Text("Cancel",style: TextStyle(
+              color: Theme.of(context).colorScheme.inversePrimary,
+            )),
           ),
           TextButton(
             onPressed: () async {
@@ -62,7 +66,9 @@ class _LoginPageState extends State<LoginPage> {
                 context,
               ).showSnackBar(SnackBar(content: Text(message)));
             },
-            child: const Text("Reset"),
+            child: Text("Reset",style: TextStyle(
+              color: Theme.of(context).colorScheme.tertiary,
+            )),
           ),
         ],
       ),
@@ -73,9 +79,12 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Login',
-          style: TextStyle(color: Colors.indigo, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.inversePrimary,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: Padding(
@@ -83,7 +92,11 @@ class _LoginPageState extends State<LoginPage> {
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.lock_open, size: 75, color: Colors.indigo),
+              Icon(
+                Icons.lock_open,
+                size: 75,
+                color: Theme.of(context).colorScheme.inversePrimary,
+              ),
               const SizedBox(height: 25),
               MyTextField(
                 controller: emailController,
@@ -105,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: Text(
                       "Forgot password?",
                       style: TextStyle(
-                        color: Colors.indigo,
+                        color: Theme.of(context).colorScheme.inversePrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -118,15 +131,19 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Do not have an account? '),
+                  Text(
+                    'Do not have an account? ',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                  ),
                   GestureDetector(
                     onTap: widget.togglePages,
 
                     child: Text(
                       "Register now",
                       style: TextStyle(
-                        backgroundColor: Colors.indigo.shade50,
-                        color: Colors.indigo,
+                        color: Theme.of(context).colorScheme.inversePrimary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:uat_project/feature/auth/presentation/cubits/auth_states.dart';
+import 'auth_states.dart';
 
 import '../../domain/entities/app_user.dart';
 import '../../domain/entities/repos/auth_repo.dart';
@@ -48,6 +48,7 @@ class AuthCubit extends Cubit<AuthState> {
       final user = await authRepo.registerWithEmailPassword(name, email, pw);
       if(user != null){
         _currentUser = user;
+
         emit(Authenticated(user));
       } else{
         emit(Unauthenticated());

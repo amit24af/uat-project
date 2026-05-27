@@ -5,6 +5,7 @@ import 'package:uat_project/feature/auth/data/firebase_auth_repo.dart';
 import 'package:uat_project/feature/auth/presentation/components/loading.dart';
 import 'package:uat_project/feature/auth/presentation/cubits/auth_states.dart';
 import 'package:uat_project/feature/auth/presentation/pages/login_page.dart';
+import 'package:uat_project/feature/themes/light_mode.dart';
 import 'package:uat_project/firebase_options.dart';
 
 import 'feature/auth/presentation/cubits/auth_cubit.dart';
@@ -35,6 +36,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
+        theme: lightMode,
         home: BlocConsumer<AuthCubit, AuthState>(
             builder: (context, state){
               print(state);
