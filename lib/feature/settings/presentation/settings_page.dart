@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uat_project/feature/auth/presentation/components/loading.dart';
 import 'package:uat_project/feature/settings/presentation/settings_tile.dart';
 
 import '../../auth/presentation/cubits/auth_cubit.dart';
@@ -39,7 +40,7 @@ class _SettingsPageState extends State<SettingsPage> {
     try {
       showDialog(
         context: context,
-        builder: (context) => Center(child: CircularProgressIndicator()),
+        builder: (context) => Center(child: LoadingScreen()),
       );
       final authCubit = context.read<AuthCubit>();
       await authCubit.deleteAccount();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uat_project/feature/home/presentation/components/drawer_tile.dart';
-import 'package:uat_project/feature/profile/profile_page.dart';
+import 'package:uat_project/feature/profile/presentation/pages/profile_page.dart';
 
 import '../../../auth/presentation/cubits/auth_cubit.dart';
 import '../../../settings/presentation/settings_page.dart';
@@ -73,10 +73,11 @@ class MyDrawer extends StatelessWidget {
                   icon: Icons.person,
                   onTap: () {
                     Navigator.pop(context);
+                    final user = context.read<AuthCubit>().CurrentUser;
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ProfilePage(),
+                          builder: (context) => ProfilePage(uid: user!.uid,),
                         )
                     );
                   },
