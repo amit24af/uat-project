@@ -14,11 +14,11 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   void confirmAccountDeletion() {
-    Navigator.pop(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text("Delete Account?"),
+        content: const Text("This cannot be undone."),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -36,22 +36,61 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Future<void> handleAccountDeletion() async {
+
+  Future<void> handleAccountDeletion({String? password}) async {
     try {
       showDialog(
         context: context,
-        builder: (context) => Center(child: LoadingScreen()),
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
       );
-      final authCubit = context.read<AuthCubit>();
-      await authCubit.deleteAccount();
-      if (mounted) {
-        Navigator.pop(context); // for rm of loading circle
-        Navigator.pop(context); // for rm of settings page
-      }
+
+      await context.read<AuthCubit>().deleteAccount(password: password);
+
+      if (!mounted) return;
+      Navigator.of(context).popUntil((route) => route.isFirst);
+
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+      if (!mounted) return;
+      Navigator.pop(context);
+
+      if (e.toString().contains('requires-recent-login')) {
+        _showPasswordDialog();
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.toString())));
+      }
     }
+  }
+
+  void _showPasswordDialog() {
+    final passwordController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm your password"),
+        content: TextField(
+          controller: passwordController,
+          obscureText: true,
+          decoration: const InputDecoration(labelText: "Password"),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Cancel"),
+          ),
+          TextButton(
+            onPressed: () {
+              final password = passwordController.text.trim();
+              if (password.isEmpty) return;
+              Navigator.pop(context);
+              handleAccountDeletion(password: password);
+            },
+            child: const Text("Confirm"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override

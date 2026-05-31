@@ -77,13 +77,16 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> deleteAccount() async {
-    try{
+  Future<void> deleteAccount({String? password}) async {
+    try {
       emit(AuthLoading());
-      await authRepo.deleteAccount();
+      await authRepo.deleteAccount(password: password);
       emit(Unauthenticated());
-    }catch(e){
-      emit(AuthError(e.toString()));
+    } catch (e) {
+      if (e.toString().contains('requires-recent-login')) {
+        emit(Authenticated(_currentUser!));
+        rethrow;
+      }
       emit(Unauthenticated());
     }
   }
