@@ -4,6 +4,7 @@ import 'package:uat_project/feature/auth/domain/entities/repos/auth_repo.dart';
 
 class FirebaseAuthRepo implements AuthRepo{
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
   @override
   Future<void> deleteAccount() async {
     try{
