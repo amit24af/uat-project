@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uat_project/feature/auth/presentation/components/loading.dart';
@@ -38,32 +39,51 @@ class _ProfilePageState extends State<ProfilePage> {
           return Scaffold(
             appBar: AppBar(
               title: Text(user.name),
-              foregroundColor: Theme.of(context).colorScheme.primary,
+              foregroundColor: Theme.of(context).colorScheme.tertiary,
               actions: [
                 IconButton(
-                    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context)=> EditProfilePage(user: user))),
-                    icon: const Icon(Icons.settings)),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditProfilePage(user: user),
+                    ),
+                  ),
+                  icon: const Icon(Icons.settings),
+                ),
               ],
             ),
             body: Column(
               children: [
+                const SizedBox(height: 15),
                 Text(
                   user.email,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
+                    color: Theme.of(context).colorScheme.inversePrimary,
                   ),
                 ),
 
-                const SizedBox(height: 25),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.secondary,
-                    borderRadius: BorderRadius.circular(10),
+                const SizedBox(height: 35),
+                CachedNetworkImage(
+                  imageUrl: user.profileImageUrl,
+                  placeholder: (context, url) =>
+                      const CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.person_rounded,
+                    size: 72,
+                    color: Theme.of(context).colorScheme.inversePrimary,
                   ),
-                  height: 120,
-                  width: 120,
-                  padding: const EdgeInsets.all(25),
-                  child: Center(child: Icon(Icons.person)),
+
+                  imageBuilder: (context, imageProvider) => Container(
+                    height: 120,
+                    width: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        image: imageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
                 ),
 
                 const SizedBox(height: 25),
@@ -75,16 +95,17 @@ class _ProfilePageState extends State<ProfilePage> {
                       Text(
                         "Bio",
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.inversePrimary,
                         ),
                       ),
                     ],
                   ),
                 ),
 
-                const SizedBox(height: 15),
+                const SizedBox(height: 25),
 
                 BioBox(text: user.bio),
+                const SizedBox(height: 25),
 
                 Padding(
                   padding: const EdgeInsets.only(left: 15.0),
@@ -93,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Text(
                         "Posts",
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.inversePrimary,
                         ),
                       ),
                     ],

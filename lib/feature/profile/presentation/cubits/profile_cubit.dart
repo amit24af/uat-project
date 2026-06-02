@@ -1,12 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uat_project/feature/profile/presentation/cubits/profile_states.dart';
 
+import '../../../storage/domain/storage_repo.dart';
 import '../../repository/profile_repo.dart';
 
 class ProfileCubit extends Cubit<ProfileState> {
   final ProfileRepo profileRepo;
+  final StorageRepo storageRepo;
 
-  ProfileCubit({required this.profileRepo}) : super(ProfileInitial());
+  ProfileCubit({required this.profileRepo, required this.storageRepo})
+    : super(ProfileInitial());
 
   Future<void> fetchUserProfile(String uid) async {
     try {
@@ -23,7 +26,11 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<void> updateProfile({required String uid, String? newBio}) async {
+  Future<void> updateProfile({
+    required String uid,
+    String? newBio,
+    String? imageMobilePath,
+  }) async {
     emit(ProfileLoading());
     try {
       final currentUser = await profileRepo.fetchUserProfile(uid);
@@ -32,13 +39,21 @@ class ProfileCubit extends Cubit<ProfileState> {
         return;
       }
       // profile picture update
-
+      String? imageDownloadUrl;
+      if (imageMobilePath != null) {
+        imageDownloadUrl = await storageRepo.uploadProfileImageMobile(
+          imageMobilePath,
+          uid,
+        );
+      }
       // update new profile
-      final updatedProfile = currentUser.copyWith(newBio: newBio ?? currentUser.bio);
+      final updatedProfile = currentUser.copyWith(
+        newBio: newBio ?? currentUser.bio,
+        newProfileImageUrl: imageDownloadUrl ?? currentUser.profileImageUrl,
+      );
       await profileRepo.updateProfile(updatedProfile);
       // re-fetch the updated profile
       await fetchUserProfile(uid);
-
     } catch (e) {
       emit(ProfileError("Error"));
     }

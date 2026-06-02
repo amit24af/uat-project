@@ -14,6 +14,7 @@ import 'feature/auth/presentation/pages/register_page.dart';
 import 'feature/home/presentation/pages/home_page.dart';
 import 'feature/profile/data/firebase_profile_repo.dart';
 import 'feature/profile/presentation/cubits/profile_cubit.dart';
+import 'feature/storage/data/firebase_storage_repo.dart';
 
 void main() async{
   //firebase setup
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
   final firebaseAuthRepo = FirebaseAuthRepo();
   final firebaseProfileRepo = FirebaseProfileRepo();
-
+  final firebaseStorageRepo = FirebaseStorageRepo();
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
           create: (context) => AuthCubit(authRepo: firebaseAuthRepo)..checkAuth(),
         ),
         BlocProvider(
-          create: (context) => ProfileCubit(profileRepo: firebaseProfileRepo),
+          create: (context) => ProfileCubit(profileRepo: firebaseProfileRepo, storageRepo: firebaseStorageRepo),
         )
       ],
       child: MaterialApp(
