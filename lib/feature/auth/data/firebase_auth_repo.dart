@@ -62,10 +62,16 @@ class FirebaseAuthRepo implements AuthRepo {
     try {
       UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
+
+      DocumentSnapshot userDoc = await firebaseFirestore
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .get();
+
       AppUser user = AppUser(
         uid: userCredential.user!.uid,
         email: email,
-        name: '',
+        name: userDoc['name'],
       );
 
       return user;
