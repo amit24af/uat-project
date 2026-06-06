@@ -12,7 +12,6 @@ class FirebaseAuthRepo implements AuthRepo {
   Future<void> deleteAccount({String? password}) async {
     final user = firebaseAuth.currentUser;
     if (user == null) throw Exception('No user logged in.');
-
     try {
       await user.delete();
       await logout();
@@ -47,14 +46,20 @@ class FirebaseAuthRepo implements AuthRepo {
     );
     await user.reauthenticateWithCredential(credential);
   }
+
   @override
   Future<AppUser?> getCurrentUser() async {
     // get current logged in user from firebase
     final firebaseUser = firebaseAuth.currentUser;
     // no logged in user
     if (firebaseUser == null) return null;
+
+    DocumentSnapshot userDoc = await firebaseFirestore.collection("users").doc(firebaseUser.uid).get();
+    if(!userDoc.exists){
+      return null;
+    }
     // logged in user exists
-    return AppUser(uid: firebaseUser.uid, email: firebaseUser.email!, name: '');
+    return AppUser(uid: firebaseUser.uid, email: firebaseUser.email!, name: userDoc['name']);
   }
 
   @override
