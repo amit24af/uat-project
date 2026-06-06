@@ -10,6 +10,11 @@ class FirebaseStorageRepo implements StorageRepo{
     // TODO: implement uploadProfileImageMobile
     return _uploadFile(path, fileName, "profile_images");
   }
+  @override
+  Future<String?> uploadPostImageMobile(String path, String fileName) {
+    // TODO: implement postProfileImageMobile
+    return _uploadFile(path, fileName, "post_images");
+  }
   Future<String?> _uploadFile(String path, String fileName, String folder) async{
     try{
       final file = File(path);
