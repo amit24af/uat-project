@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:uat_project/feature/auth/data/firebase_auth_repo.dart';
 import 'package:uat_project/feature/auth/presentation/components/loading.dart';
 import 'package:uat_project/feature/auth/presentation/cubits/auth_states.dart';
@@ -17,6 +18,7 @@ import 'feature/profile/presentation/cubits/profile_cubit.dart';
 import 'feature/storage/data/firebase_storage_repo.dart';
 
 void main() async{
+  await dotenv.load(fileName: ".env");
   //firebase setup
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -47,7 +49,6 @@ class MyApp extends StatelessWidget {
         home: BlocConsumer<AuthCubit, AuthState>(
             builder: (context, state){
               print(state);
-
               if(state is Unauthenticated){
                 return const AuthPage();
               }

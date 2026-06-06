@@ -18,6 +18,10 @@ dependencies:
   firebase_storage: ^12.4.10
   file_picker: ^11.0.2
   cached_network_image: ^3.4.1
+  http: ^1.6.0
+  geolocator: ^14.0.2
+  geocoding: ^4.0.0
+  flutter_dotenv: ^6.0.1
 
 dev_dependencies:
   flutter_test:
@@ -26,3 +30,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
+    - .env
