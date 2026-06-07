@@ -4,14 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uat_project/feature/auth/presentation/cubits/auth_cubit.dart';
 import 'package:uat_project/feature/post/domain/entities/post.dart';
-import 'package:uat_project/feature/post/domain/entities/post_location.dart';
-
 import 'package:uat_project/feature/post/presentation/cubits/post_cubit.dart';
 import 'package:uat_project/feature/post/presentation/cubits/post_states.dart';
 
 import '../../../auth/domain/entities/app_user.dart';
 import '../../../auth/presentation/components/my_textfield.dart';
-import '../../components/location_picker.dart';
+
 
 class UploadPostPage extends StatefulWidget {
   const UploadPostPage({super.key});
@@ -22,9 +20,9 @@ class UploadPostPage extends StatefulWidget {
 
 class _UploadPostPageState extends State<UploadPostPage> {
   PlatformFile? imagePickedFile;
-  PostLocation? selectedLocation;
 
   final textController = TextEditingController();
+
   AppUser? currentUser;
 
   @override
@@ -47,20 +45,6 @@ class _UploadPostPageState extends State<UploadPostPage> {
     }
   }
 
-  void _pickLocation() async {
-    final location = await showModalBottomSheet<PostLocation>(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (_) => const LocationPicker(),
-    );
-    if (location != null) {
-      setState(() => selectedLocation = location);
-    }
-  }
-
   void uploadPost() {
     if (imagePickedFile == null || textController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -76,7 +60,8 @@ class _UploadPostPageState extends State<UploadPostPage> {
       text: textController.text,
       imageUrl: '',
       timeStamp: DateTime.now(),
-      location: selectedLocation,
+      location: null,
+      likes: []
     );
 
     final postCubit = context.read<PostCubit>();
@@ -93,6 +78,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
   Widget build(BuildContext context) {
     return BlocConsumer<PostCubit, PostState>(
       builder: (context, state) {
+        print(state);
         if (state is PostLoading || state is PostUploading) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
@@ -118,73 +104,22 @@ class _UploadPostPageState extends State<UploadPostPage> {
         ],
       ),
       body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              if (imagePickedFile != null)
-                Image.file(File(imagePickedFile!.path!)),
-              MaterialButton(
-                onPressed: pickImage,
-                color: Theme.of(context).primaryColor,
-                child: const Text("Pick Image"),
-              ),
-              MyTextField(
-                controller: textController,
-                hintText: "Caption",
-                obscureText: false,
-              ),
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: _pickLocation,
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Theme.of(context).colorScheme.outline,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        selectedLocation == null
-                            ? Icons.add_location_alt_outlined
-                            : Icons.location_on,
-                        color: selectedLocation == null
-                            ? Theme.of(context).colorScheme.outline
-                            : Theme.of(context).colorScheme.primary,
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: Text(
-                          selectedLocation == null
-                              ? "Add location"
-                              : selectedLocation!.displayName,
-                          style: TextStyle(
-                            color: selectedLocation == null
-                                ? Theme.of(context).colorScheme.outline
-                                : Theme.of(context).colorScheme.primary,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      if (selectedLocation != null)
-                        GestureDetector(
-                          onTap: () => setState(() => selectedLocation = null),
-                          child: Icon(
-                            Icons.close,
-                            size: 18,
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
+        child: Column(
+          children: [
+            if (imagePickedFile != null)
+              Image.file(File(imagePickedFile!.path!)),
+            MaterialButton(
+              onPressed: pickImage,
+              color: Theme.of(context).primaryColor,
+              child: const Text("Pick Image"),
+            ),
+            const SizedBox(height: 25),
+            MyTextField(
+              controller: textController,
+              hintText: "Caption",
+              obscureText: false,
+            ),
+          ],
         ),
       ),
     );

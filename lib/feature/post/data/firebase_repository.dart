@@ -26,7 +26,7 @@ class FirebasePostRepo implements PostRepo{
   Future<List<Post>> fetchAllPosts() async {
     // TODO: implement fetchAllPosts
     try{
-      final postsSnapshot = await postCollection.orderBy('timestamp', descending: true).get();
+      final postsSnapshot = await postCollection.orderBy('timeStamp', descending: true).get();
       final List<Post> allPosts = postsSnapshot.docs.map((doc) => Post.fromJson(doc.data() as Map<String, dynamic>)).toList();
       return allPosts;
     }catch(e){
@@ -48,5 +48,26 @@ class FirebasePostRepo implements PostRepo{
       throw Exception("Error fetching posts by userID: $userId");
     }
   }
-  
+
+  @override
+  Future<void> toggleLikePost(String postId, String userId) async {
+    // TODO: implement toggleLikePost
+    try {
+      final postDoc = await postCollection.doc(postId).get();
+      if (postDoc.exists) {
+        final post = Post.fromJson(postDoc.data() as Map<String, dynamic>);
+        final hasLiked = post.likes.contains(userId);
+        if (hasLiked) {
+          post.likes.remove(userId);
+        } else {
+          post.likes.add(userId);
+        }
+        await postCollection.doc(postId).update({'likes': post.likes});
+      } else {
+        throw Exception("Post not found");
+      }
+    } catch (e) {
+      throw Exception("Error togglign like: $e");
+    }
+  }
 }

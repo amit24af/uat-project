@@ -8,7 +8,7 @@ import 'package:uat_project/feature/post/presentation/cubits/post_states.dart';
 import 'package:uat_project/feature/post/presentation/pages/upload_post_page.dart';
 
 import '../../../auth/presentation/cubits/auth_cubit.dart';
-import '../components/post_tile.dart';
+import '../../../post/components/post_tile.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -9,6 +9,7 @@ class Post {
   final String imageUrl;
   final DateTime timeStamp;
   final PostLocation? location;
+  final List<String> likes;
 
   Post({
     required this.id,
@@ -17,10 +18,10 @@ class Post {
     required this.text,
     required this.imageUrl,
     required this.timeStamp,
-    required this.location,
+    required this.location, required this.likes,
   });
 
-  Post copyWith({String? imageUrl, String? text, PostLocation? location}) {
+  Post copyWith({String? imageUrl, String? text}) {
     return Post(
       id: id,
       userId: userId,
@@ -29,6 +30,7 @@ class Post {
       imageUrl: imageUrl ?? this.imageUrl,
       timeStamp: timeStamp,
       location: location ?? this.location,
+      likes: likes,
     );
   }
 
@@ -48,13 +50,14 @@ class Post {
     return Post(
       id: json['id'],
       userId: json['userId'],
-      userName: json['userName'],
+      userName: json['name'],
       text: json['text'],
       imageUrl: json['imageUrl'],
       timeStamp: (json['timeStamp'] as Timestamp).toDate(),
       location: json['location'] != null
           ? PostLocation.fromJson(json['location'])
           : null,
+      likes: List<String>.from(json['likes'] ?? [])
     );
   }
 }

@@ -2,11 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uat_project/feature/profile/presentation/cubits/profile_cubit.dart';
-import '../../../auth/domain/entities/app_user.dart';
-import '../../../auth/presentation/cubits/auth_cubit.dart';
-import '../../../post/domain/entities/post.dart';
-import '../../../post/presentation/cubits/post_cubit.dart';
-import '../../../profile/domain/entities/profile_user.dart';
+import '../../auth/domain/entities/app_user.dart';
+import '../../auth/presentation/cubits/auth_cubit.dart';
+import '../domain/entities/post.dart';
+import '../presentation/cubits/post_cubit.dart';
+import '../../profile/domain/entities/profile_user.dart';
 
 class PostTile extends StatefulWidget {
   final Post post;
@@ -54,6 +54,28 @@ class _PostTileState extends State<PostTile> {
     }
   }
 
+  void toggleLikePost() {
+    final isLiked = widget.post.likes.contains(currentUser!.uid);
+    setState(() {
+      if (isLiked) {
+        widget.post.likes.remove(currentUser!.uid);
+      } else {
+        widget.post.likes.add(currentUser!.uid);
+      }
+    });
+    postCubit.toggleLikePost(widget.post.id, currentUser!.uid).catchError((
+      error,
+    ) {
+      setState(() {
+        if (isLiked) {
+          widget.post.likes.add(currentUser!.uid);
+        } else {
+          widget.post.likes.remove(currentUser!.uid);
+        }
+      });
+    });
+  }
+
   void showOptions() {
     showDialog(
       context: context,
@@ -69,7 +91,7 @@ class _PostTileState extends State<PostTile> {
               widget.onDeletePressed!();
               Navigator.of(context).pop();
             },
-            child: const Text("Cancel"),
+            child: const Text("Delete"),
           ),
         ],
       ),
@@ -92,34 +114,39 @@ class _PostTileState extends State<PostTile> {
                         imageUrl: postUser!.profileImageUrl,
                         errorWidget: (context, url, error) =>
                             const Icon(Icons.person_rounded),
-                  imageBuilder: (context, imageProvider)=>Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: imageProvider,
-                        fit: BoxFit.cover
-                      )
-                    )
-                  ),
-
+                        imageBuilder: (context, imageProvider) => Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: imageProvider,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
                       )
                     : const Icon(Icons.person_rounded),
 
                 const SizedBox(width: 10),
 
-                Text(widget.post.userName, style: TextStyle(
-                  color: Theme.of(context).colorScheme.inversePrimary,
-                  fontWeight: FontWeight.bold,
-                )),
+                Text(
+                  widget.post.userName,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
 
                 const Spacer(),
 
-                if(isOwnPost)
+                if (isOwnPost)
                   GestureDetector(
                     onTap: showOptions,
-                    child: Icon(Icons.delete, color: Theme.of(context).colorScheme.primary),
+                    child: Icon(
+                      Icons.delete,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
               ],
             ),
@@ -133,19 +160,38 @@ class _PostTileState extends State<PostTile> {
             placeholder: (context, url) => const SizedBox(height: 430),
             errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
+
           ///
           Padding(
             padding: const EdgeInsets.all(20.0),
             child: Row(
               children: [
-                Icon(Icons.favorite_border),
-                const Spacer(),
-                Icon(Icons.comment),
+                GestureDetector(
+                  onTap: toggleLikePost,
+                  child: Icon(
+                    widget.post.likes.contains(currentUser!.uid)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    color: widget.post.likes.contains(currentUser!.uid)
+                        ? Colors.red
+                        : Theme.of(context).colorScheme.primary,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                Text(
+                  widget.post.likes.length.toString(),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 12,
+                  ),
+                ),
                 const Spacer(),
                 Text(widget.post.timeStamp.toString()),
-              ]
+                const SizedBox(width: 12),
+                const Icon(Icons.comment),
+              ],
             ),
-          )
+          ),
         ],
       ),
     );
