@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uat_project/feature/post/domain/entities/comment.dart';
 import 'package:uat_project/feature/post/domain/entities/post_location.dart';
 
 class Post {
@@ -10,6 +11,7 @@ class Post {
   final DateTime timeStamp;
   final PostLocation? location;
   final List<String> likes;
+  final List<Comment> comments;
 
   Post({
     required this.id,
@@ -18,7 +20,9 @@ class Post {
     required this.text,
     required this.imageUrl,
     required this.timeStamp,
-    required this.location, required this.likes,
+    required this.location,
+    required this.likes,
+    required this.comments,
   });
 
   Post copyWith({String? imageUrl, String? text}) {
@@ -31,6 +35,7 @@ class Post {
       timeStamp: timeStamp,
       location: location ?? this.location,
       likes: likes,
+      comments: comments,
     );
   }
 
@@ -43,10 +48,17 @@ class Post {
       'imageUrl': imageUrl,
       'timeStamp': Timestamp.fromDate(timeStamp),
       'location': location?.toJson(),
+      'likes': likes,
+      'comments': comments.map((comment) => comment.toJson()).toList(),
     };
   }
 
   factory Post.fromJson(Map<String, dynamic> json) {
+    final List<Comment> comments =
+        (json['comments'] as List<dynamic>?)
+            ?.map((commentJson) => Comment.fromJson(commentJson))
+            .toList() ??
+        [];
     return Post(
       id: json['id'],
       userId: json['userId'],
@@ -57,7 +69,8 @@ class Post {
       location: json['location'] != null
           ? PostLocation.fromJson(json['location'])
           : null,
-      likes: List<String>.from(json['likes'] ?? [])
+      likes: List<String>.from(json['likes'] ?? []),
+      comments: comments,
     );
   }
 }

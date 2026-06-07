@@ -61,7 +61,8 @@ class _UploadPostPageState extends State<UploadPostPage> {
       imageUrl: '',
       timeStamp: DateTime.now(),
       location: null,
-      likes: []
+      likes: [],
+      comments: []
     );
 
     final postCubit = context.read<PostCubit>();

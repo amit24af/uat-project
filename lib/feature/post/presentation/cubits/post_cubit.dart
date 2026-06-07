@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:uat_project/feature/post/presentation/cubits/post_states.dart';
 
 import '../../../storage/domain/storage_repo.dart';
+import '../../domain/entities/comment.dart';
 import '../../domain/entities/post.dart';
 import '../../repos/post_repo.dart';
 
@@ -49,6 +50,24 @@ class PostCubit extends Cubit<PostState>{
       await postRepo.toggleLikePost(postId, userId);
     }catch (e){
       emit(PostError("Failed to toggle like: $e"));
+    }
+  }
+
+  Future<void> addComment(String postId, Comment comment) async{
+    try{
+      await postRepo.addComment(postId, comment);
+      await fetchAllPost();
+    }catch(e){
+      emit (PostError("Failed to add comment: $e"));
+    }
+  }
+
+  Future<void> deleteComment(String postId, String commentId) async {
+    try{
+      await postRepo.deleteComment(postId, commentId);
+      await fetchAllPost();
+    }catch(e){
+      emit(PostError("Failed to delete comment: $e"));
     }
   }
 
