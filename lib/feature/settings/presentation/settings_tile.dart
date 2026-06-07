@@ -8,22 +8,21 @@ class MySettingsTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.indigo.shade200,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(12),
-
       ),
       padding: EdgeInsets.all(10),
-      margin: const EdgeInsets.only(left: 25, right: 25, top:10),
+      margin: const EdgeInsets.only(left: 25, right: 25, top: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children:[
+        children: [
           Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold)
+            title,
+            style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           action
-        ]
-      )
+        ],
+      ),
     );
   }
 }

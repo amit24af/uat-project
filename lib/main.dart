@@ -8,6 +8,7 @@ import 'package:uat_project/feature/auth/presentation/cubits/auth_states.dart';
 import 'package:uat_project/feature/auth/presentation/pages/login_page.dart';
 import 'package:uat_project/feature/search/data/firebase_search_repo.dart';
 import 'package:uat_project/feature/themes/light_mode.dart';
+import 'package:uat_project/feature/themes/theme_cubit.dart';
 import 'package:uat_project/firebase_options.dart';
 
 import 'feature/auth/presentation/cubits/auth_cubit.dart';
@@ -20,6 +21,7 @@ import 'feature/profile/data/firebase_profile_repo.dart';
 import 'feature/profile/presentation/cubits/profile_cubit.dart';
 import 'feature/search/presentation/cubits/search_cubit.dart';
 import 'feature/storage/data/firebase_storage_repo.dart';
+import 'feature/themes/dark_mode.dart';
 
 void main() async{
   await dotenv.load(fileName: ".env");
@@ -53,29 +55,34 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => SearchCubit(searchRepo: firebaseSearchRepo),
+        ),
+        BlocProvider(
+          create: (context) => ThemeCubit()
         )
       ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: lightMode,
-        home: BlocConsumer<AuthCubit, AuthState>(
-            builder: (context, state){
-              print(state);
-              if(state is Unauthenticated){
-                return const AuthPage();
-              }
-              if(state is Authenticated){
-                return const HomePage();
-              } else {
-                return LoadingScreen();
-              }
+      child: BlocBuilder<ThemeCubit, ThemeData>(
+        builder: (context, currentTheme) => MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: currentTheme,
+          home: BlocConsumer<AuthCubit, AuthState>(
+              builder: (context, state){
+                print(state);
+                if(state is Unauthenticated){
+                  return const AuthPage();
+                }
+                if(state is Authenticated){
+                  return const HomePage();
+                } else {
+                  return LoadingScreen();
+                }
 
-            }, listener: (context, state){
-          if(state is AuthError){
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message),));
-          }
-        }),
-      ),
+              }, listener: (context, state){
+            if(state is AuthError){
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.message),));
+            }
+          }),
+        ),
+      )
     );
   }
 }

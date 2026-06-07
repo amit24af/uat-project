@@ -57,13 +57,14 @@ class _CommentTileState extends State<CommentTile> {
         children: [
           Text(widget.comment.userName,
               style: const TextStyle(fontWeight: FontWeight.bold)),
+          const SizedBox(width: 10),
           Text(widget.comment.text),
           const Spacer(),
           if (isOwnPost)
             GestureDetector(
                 onTap: showOptions,
                 child: Icon(Icons.more_horiz,
-                color: Theme.of(context).colorScheme.primary)
+                color: Theme.of(context).colorScheme.secondary)
             )
         ],
       ),

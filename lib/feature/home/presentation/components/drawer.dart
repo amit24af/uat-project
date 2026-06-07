@@ -21,18 +21,18 @@ class MyDrawer extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Logout?"),
+        title: Text("Log out?", style: TextStyle(color: Theme.of(context).colorScheme.secondary,)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: Text("Cancel", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               logout(context);
             },
-            child: const Text("Yes"),
+            child: Text("Yes", style: TextStyle(color: Theme.of(context).colorScheme.secondary,)),
           ),
         ],
       ),

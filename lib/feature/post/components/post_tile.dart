@@ -156,42 +156,36 @@ class _PostTileState extends State<PostTile> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.secondary,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
             onTap: () => Navigator.push(context,
-                MaterialPageRoute(
-                  builder: (context) => ProfilePage(
-                    uid: widget.post.userId
-                  )
-                )),
+                MaterialPageRoute(builder: (context) => ProfilePage(uid: widget.post.userId))),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   postUser?.profileImageUrl != null
                       ? CachedNetworkImage(
-                          imageUrl: postUser!.profileImageUrl,
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.person_rounded),
-                          imageBuilder: (context, imageProvider) => Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                image: imageProvider,
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        )
+                    imageUrl: postUser!.profileImageUrl,
+                    errorWidget: (context, url, error) => const Icon(Icons.person_rounded),
+                    imageBuilder: (context, imageProvider) => Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                      ),
+                    ),
+                  )
                       : const Icon(Icons.person_rounded),
-            
                   const SizedBox(width: 10),
-            
                   Text(
                     widget.post.userName,
                     style: TextStyle(
@@ -199,127 +193,135 @@ class _PostTileState extends State<PostTile> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-            
                   const Spacer(),
-            
                   if (isOwnPost)
                     GestureDetector(
                       onTap: showOptions,
-                      child: Icon(
-                        Icons.delete,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                      child: Icon(Icons.delete, color: Theme.of(context).colorScheme.inversePrimary),
                     ),
                 ],
               ),
             ),
           ),
 
-          CachedNetworkImage(
-            imageUrl: widget.post.imageUrl,
-            height: 430,
-            width: double.infinity,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => const SizedBox(height: 430),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.zero, bottom: Radius.zero),
+            child: CachedNetworkImage(
+              imageUrl: widget.post.imageUrl,
+              height: 430,
+              width: double.infinity,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => const SizedBox(height: 430),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
+            ),
           ),
 
-          ///
           Padding(
-            padding: const EdgeInsets.all(20.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
               children: [
                 GestureDetector(
                   onTap: toggleLikePost,
                   child: Icon(
-                    widget.post.likes.contains(currentUser!.uid)
-                        ? Icons.favorite
-                        : Icons.favorite_border,
+                    widget.post.likes.contains(currentUser!.uid) ? Icons.favorite : Icons.favorite_border,
                     color: widget.post.likes.contains(currentUser!.uid)
                         ? Colors.red
-                        : Theme.of(context).colorScheme.primary,
+                        : Theme.of(context).colorScheme.inversePrimary,
                   ),
                 ),
                 const SizedBox(width: 5),
                 Text(
                   widget.post.likes.length.toString(),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary, fontSize: 12),
                 ),
                 const Spacer(),
-                Text(widget.post.timeStamp.toString()),
+                Text(
+                  widget.post.timeStamp.toString(),
+                  style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary, fontSize: 11),
+                ),
                 const SizedBox(width: 12),
-
                 GestureDetector(
                   onTap: openNewCommentBox,
-                  child: Icon(
-                      Icons.comment,
-                      color: Theme
-                          .of(context)
-                          .colorScheme
-                          .primary
-                  ),
+                  child: Icon(Icons.comment, color: Theme.of(context).colorScheme.inversePrimary),
                 ),
-
-                Text(widget.post.comments.length.toString(),
-                    style: TextStyle(
-                      color: Theme
-                          .of(context)
-                          .colorScheme
-                          .primary,
-                      fontSize: 12,
-                    )),
+                const SizedBox(width: 4),
+                Text(
+                  widget.post.comments.length.toString(),
+                  style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary, fontSize: 12),
+                ),
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
-            child: Row(children: [
-              Text(
-                  widget.post.userName,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(width: 10),
 
-              Text(widget.post.text),
-            ]
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: '${widget.post.userName}  ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                    ),
+                  ),
+                  TextSpan(
+                    text: widget.post.text,
+                    style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+                  ),
+                ],
+              ),
             ),
           ),
+
           BlocBuilder<PostCubit, PostState>(
-              builder: (context, state){
-              if(state is PostLoaded){
-                final post = state.posts.firstWhere((post) => (post.id == widget.post.id));
-                if(post.comments.isNotEmpty){
-                  int showCommentCount =  post.comments.length;
-                  return ListView.builder(
-                    itemCount: showCommentCount,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (BuildContext context, int index) {
-                      final comment = post.comments[index];
+            builder: (context, state) {
+              if (state is PostLoaded) {
+                final post = state.posts.firstWhere(
+                      (p) => p.id == widget.post.id,
+                  orElse: () => widget.post,
+                );
+                if (post.comments.isEmpty) return const SizedBox(height: 12);
 
-
-                      return CommentTile(comment: comment);
-
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Divider(
+                      color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.2),
+                      thickness: 1,
+                      indent: 16,
+                      endIndent: 16,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 16, bottom: 6),
+                      child: Text(
+                        "Comments",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.5),
+                        ),
+                      ),
+                    ),
+                    ListView.builder(
+                      itemCount: post.comments.length,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemBuilder: (context, index) {
+                        return CommentTile(comment: post.comments[index]);
                       },
-                  );
-                }
-              }
-              if(state is PostLoading){
-                return LoadingScreen();
-              }
-              else if (state is PostError){
+                    ),
+                    const SizedBox(height: 8),
+                  ],
+                );
+              } else if (state is PostLoading) {
+                return const LoadingScreen();
+              } else if (state is PostError) {
                 return Center(child: Text(state.message));
               }
-              else{
-                return const Center(
-                  child: Text("Something went wrong"),
-                );
-              }
-
-          })
+              return const SizedBox(height: 12);
+            },
+          ),
         ],
       ),
     );

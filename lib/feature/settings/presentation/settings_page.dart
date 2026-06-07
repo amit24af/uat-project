@@ -4,6 +4,7 @@ import 'package:uat_project/feature/auth/presentation/components/loading.dart';
 import 'package:uat_project/feature/settings/presentation/settings_tile.dart';
 
 import '../../auth/presentation/cubits/auth_cubit.dart';
+import '../../themes/theme_cubit.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -17,25 +18,24 @@ class _SettingsPageState extends State<SettingsPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Delete Account?"),
-        content: const Text("This cannot be undone."),
+        title: Text("Delete acccount?", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,)),
+        content: Text("This cannot be undone.", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: Text("Cancel", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,)),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
               handleAccountDeletion();
             },
-            child: const Text("Yes"),
+            child: Text("Yes", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,)),
           ),
         ],
       ),
     );
   }
-
 
   Future<void> handleAccountDeletion({String? password}) async {
     try {
@@ -62,13 +62,15 @@ class _SettingsPageState extends State<SettingsPage> {
       }
     }
   }
+  // Text("Cancel",
+  // style: const TextStyle(fontWeight: FontWeight.bold))
 
   void _showPasswordDialog() {
     final passwordController = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Confirm your password"),
+        title: Text("Confirm your password", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,fontWeight: FontWeight.bold)),
         content: TextField(
           controller: passwordController,
           obscureText: true,
@@ -77,7 +79,7 @@ class _SettingsPageState extends State<SettingsPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+            child: Text("Cancel", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,)),
           ),
           TextButton(
             onPressed: () {
@@ -86,7 +88,7 @@ class _SettingsPageState extends State<SettingsPage> {
               Navigator.pop(context);
               handleAccountDeletion(password: password);
             },
-            child: const Text("Confirm"),
+            child: Text("Confirm", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary,)),
           ),
         ],
       ),
@@ -95,11 +97,24 @@ class _SettingsPageState extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // ← jedina izmjena ovdje
+    final themeCubit = context.watch<ThemeCubit>();
+    final isDarkMode = themeCubit.isDarkMode;
+
     return Scaffold(
-      appBar: AppBar(title: Text("Settings")),
+      appBar: AppBar(title: const Text("Settings")),
       body: Column(
         children: [
-          // delete account
+          // dark mode toggle
+          MySettingsTile(
+            title: "Dark Mode",
+            action: Switch(
+              value: isDarkMode,
+              onChanged: (_) => themeCubit.toggleTheme(),
+            ),
+          ),
+
+          // delete account (netaknuto)
           MySettingsTile(
             title: "Delete Account",
             action: IconButton(

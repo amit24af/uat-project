@@ -111,15 +111,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
             )
           ),
           const SizedBox(height: 25),
-          Center(child: MaterialButton(onPressed: pickImage,
-              color: Colors.blue,
-              child: const Text("Select Profile Picture"))),
+          Center(child: MaterialButton(
+            onPressed: pickImage,
+              color: Theme.of(context).colorScheme.tertiary,
+              child: Text(
+                "Select Profile Picture",
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              ),
+          )
+          ),
           const SizedBox(height: 25),
           Text("Biography", style: TextStyle(
             color: Theme
                 .of(context)
                 .colorScheme
-                .primary,
+                .tertiary,
           ),),
           const SizedBox(height: 25),
           Padding(

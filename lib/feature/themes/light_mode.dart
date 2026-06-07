@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-ThemeData lightMode =  ThemeData(
+import 'package:flutter/material.dart';import 'package:flutter/material.dart';
+
+ThemeData lightMode = ThemeData(
   colorScheme: ColorScheme.light(
-    surface: Colors.teal.shade50,
-    primary: Colors.teal.shade100,
-    secondary: Colors.teal.shade200,
-    tertiary: Colors.teal.shade500,
-    inversePrimary: Colors.teal.shade900
+    surface: const Color(0xFFF0FAFA),
+    primary: const Color(0xFFFFFFFF),
+    secondary: const Color(0xFF00897B),
+    tertiary: const Color(0xFF00453D),
+    inversePrimary: const Color(0xFF002920),
   ),
-  scaffoldBackgroundColor: Colors.teal.shade50
+  scaffoldBackgroundColor: const Color(0xFFF0FAFA),
 );
