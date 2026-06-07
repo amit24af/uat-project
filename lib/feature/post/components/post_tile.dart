@@ -14,6 +14,22 @@ import '../domain/entities/post.dart';
 import '../presentation/cubits/post_cubit.dart';
 import '../../profile/domain/entities/profile_user.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uat_project/feature/auth/presentation/components/loading.dart';
+import 'package:uat_project/feature/post/components/comment_tile.dart';
+import 'package:uat_project/feature/post/presentation/cubits/post_states.dart';
+import 'package:uat_project/feature/profile/presentation/cubits/profile_cubit.dart';
+import '../../auth/domain/entities/app_user.dart';
+import '../../auth/presentation/components/my_textfield.dart';
+import '../../auth/presentation/cubits/auth_cubit.dart';
+import '../../profile/presentation/pages/profile_page.dart';
+import '../domain/entities/comment.dart';
+import '../domain/entities/post.dart';
+import '../presentation/cubits/post_cubit.dart';
+import '../../profile/domain/entities/profile_user.dart';
+
 class PostTile extends StatefulWidget {
   final Post post;
   final void Function()? onDeletePressed;
@@ -33,9 +49,7 @@ class _PostTileState extends State<PostTile> {
   late final profileCubit = context.read<ProfileCubit>();
 
   bool isOwnPost = false;
-
   AppUser? currentUser;
-
   ProfileUser? postUser;
 
   @override
@@ -69,9 +83,7 @@ class _PostTileState extends State<PostTile> {
         widget.post.likes.add(currentUser!.uid);
       }
     });
-    postCubit.toggleLikePost(widget.post.id, currentUser!.uid).catchError((
-      error,
-    ) {
+    postCubit.toggleLikePost(widget.post.id, currentUser!.uid).catchError((error) {
       setState(() {
         if (isLiked) {
           widget.post.likes.add(currentUser!.uid);
@@ -88,7 +100,7 @@ class _PostTileState extends State<PostTile> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text("Add a new comment"),
+        title: const Text("Add a new comment"),
         content: MyTextField(
           controller: commentTextController,
           hintText: "Comment something...",
@@ -99,12 +111,11 @@ class _PostTileState extends State<PostTile> {
             onPressed: () => Navigator.of(context).pop(),
             child: const Text("Cancel"),
           ),
-
           TextButton(
-          onPressed: ()  {
-            addComment();
-            Navigator.of(context).pop();
-          },
+            onPressed: () {
+              addComment();
+              Navigator.of(context).pop();
+            },
             child: const Text("Save"),
           ),
         ],
@@ -114,19 +125,20 @@ class _PostTileState extends State<PostTile> {
 
   void addComment() {
     final newComment = Comment(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        postId: widget.post.id,
-        userId: currentUser!.uid,
-        userName: currentUser!.name,
-        text: commentTextController.text,
-        timestamp: DateTime.now(),
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      postId: widget.post.id,
+      userId: currentUser!.uid,
+      userName: currentUser!.name,
+      text: commentTextController.text,
+      timestamp: DateTime.now(),
     );
-    if(commentTextController.text.isNotEmpty){
+    if (commentTextController.text.isNotEmpty) {
       postCubit.addComment(widget.post.id, newComment);
     }
   }
+
   @override
-  void dispose(){
+  void dispose() {
     commentTextController.dispose();
     super.dispose();
   }
@@ -153,6 +165,43 @@ class _PostTileState extends State<PostTile> {
     );
   }
 
+  void openImageViewer() {
+    showDialog(
+      context: context,
+      builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          children: [
+            InteractiveViewer(
+              panEnabled: true,
+              minScale: 1,
+              maxScale: 4,
+              child: CachedNetworkImage(
+                imageUrl: widget.post.imageUrl,
+                fit: BoxFit.contain,
+              ),
+            ),
+            Positioned(
+              top: 0,
+              right: 0,
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.black54,
+                    shape: BoxShape.circle,
+                  ),
+                  padding: const EdgeInsets.all(6),
+                  child: const Icon(Icons.close, color: Colors.white, size: 20),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -165,8 +214,10 @@ class _PostTileState extends State<PostTile> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => ProfilePage(uid: widget.post.userId))),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ProfilePage(uid: widget.post.userId)),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Row(
@@ -204,15 +255,18 @@ class _PostTileState extends State<PostTile> {
             ),
           ),
 
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.zero, bottom: Radius.zero),
-            child: CachedNetworkImage(
-              imageUrl: widget.post.imageUrl,
-              height: 430,
-              width: double.infinity,
-              fit: BoxFit.cover,
-              placeholder: (context, url) => const SizedBox(height: 430),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
+          GestureDetector(
+            onDoubleTap: openImageViewer,
+            child: ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.zero, bottom: Radius.zero),
+              child: CachedNetworkImage(
+                imageUrl: widget.post.imageUrl,
+                height: 430,
+                width: double.infinity,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => const SizedBox(height: 430),
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+              ),
             ),
           ),
 
@@ -223,7 +277,9 @@ class _PostTileState extends State<PostTile> {
                 GestureDetector(
                   onTap: toggleLikePost,
                   child: Icon(
-                    widget.post.likes.contains(currentUser!.uid) ? Icons.favorite : Icons.favorite_border,
+                    widget.post.likes.contains(currentUser!.uid)
+                        ? Icons.favorite
+                        : Icons.favorite_border,
                     color: widget.post.likes.contains(currentUser!.uid)
                         ? Colors.red
                         : Theme.of(context).colorScheme.inversePrimary,
@@ -326,5 +382,4 @@ class _PostTileState extends State<PostTile> {
       ),
     );
   }
-
 }
