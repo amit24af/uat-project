@@ -41,7 +41,7 @@ class ProfileUser extends AppUser {
     };
   }
 
-  factory ProfileUser.formJson(Map<String, dynamic> json){
+  factory ProfileUser.fromJson(Map<String, dynamic> json){
     return ProfileUser(
         uid: json['uid'],
         email: json['email'],

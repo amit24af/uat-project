@@ -5,6 +5,7 @@ import 'package:uat_project/feature/profile/presentation/pages/profile_page.dart
 import 'package:uat_project/feature/weather/pages/weather_page.dart';
 
 import '../../../auth/presentation/cubits/auth_cubit.dart';
+import '../../../search/pages/search_page.dart';
 import '../../../settings/presentation/settings_page.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -53,6 +54,20 @@ class MyDrawer extends StatelessWidget {
                   text: "Home",
                   icon: Icons.home,
                   onTap: () => Navigator.pop(context),
+                ),
+
+                MyDrawerTile(
+                  text: "Search",
+                  icon: Icons.search_outlined,
+                  onTap: () {
+                    Navigator.pop(context);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => SearchPage()
+                        )
+                    );
+                  },
                 ),
 
                 MyDrawerTile(
