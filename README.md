@@ -43,7 +43,7 @@
     - Number of following
 - **Edit profile**, bio, and posts is restricted to the **profile owner only**
 
-### 🔐 Authentication
+### Authentication
 - Full **registration and login** flow
 - When deleting content, **recently logged-in users** are required to **re-enter their password** as a security confirmation step
 
@@ -151,8 +151,7 @@ All checks should be green ✅. Follow any printed instructions for items that a
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_REPO.git
-cd YOUR_REPO
+git clone git@github.com:amit24af/uat-project.git
 ```
 
 ### 2. Install dependencies
