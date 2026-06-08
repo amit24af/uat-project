@@ -58,7 +58,7 @@ class Post {
         (json['comments'] as List<dynamic>?)
             ?.map((commentJson) => Comment.fromJson(commentJson))
             .toList() ??
-        [];
+            [];
     return Post(
       id: json['id'],
       userId: json['userId'],

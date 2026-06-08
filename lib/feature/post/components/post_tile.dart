@@ -30,6 +30,7 @@ import '../domain/entities/post.dart';
 import '../presentation/cubits/post_cubit.dart';
 import '../../profile/domain/entities/profile_user.dart';
 
+
 class PostTile extends StatefulWidget {
   final Post post;
   final void Function()? onDeletePressed;
@@ -213,10 +214,14 @@ class _PostTileState extends State<PostTile> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
+          // ── HEADER: avatar + ime + delete ──────────────────────
           GestureDetector(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => ProfilePage(uid: widget.post.userId)),
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ProfilePage(uid: widget.post.userId)),
             ),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -225,13 +230,15 @@ class _PostTileState extends State<PostTile> {
                   postUser?.profileImageUrl != null
                       ? CachedNetworkImage(
                     imageUrl: postUser!.profileImageUrl,
-                    errorWidget: (context, url, error) => const Icon(Icons.person_rounded),
+                    errorWidget: (context, url, error) =>
+                    const Icon(Icons.person_rounded),
                     imageBuilder: (context, imageProvider) => Container(
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        image: DecorationImage(image: imageProvider, fit: BoxFit.cover),
+                        image: DecorationImage(
+                            image: imageProvider, fit: BoxFit.cover),
                       ),
                     ),
                   )
@@ -248,30 +255,37 @@ class _PostTileState extends State<PostTile> {
                   if (isOwnPost)
                     GestureDetector(
                       onTap: showOptions,
-                      child: Icon(Icons.delete, color: Theme.of(context).colorScheme.inversePrimary),
+                      child: Icon(Icons.delete,
+                          color:
+                          Theme.of(context).colorScheme.inversePrimary),
                     ),
                 ],
               ),
             ),
           ),
 
+          // ── SLIKA ───────────────────────────────────────────────
           GestureDetector(
             onDoubleTap: openImageViewer,
             child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.zero, bottom: Radius.zero),
+              borderRadius: const BorderRadius.vertical(
+                  top: Radius.zero, bottom: Radius.zero),
               child: CachedNetworkImage(
                 imageUrl: widget.post.imageUrl,
                 height: 430,
                 width: double.infinity,
                 fit: BoxFit.cover,
                 placeholder: (context, url) => const SizedBox(height: 430),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
+                errorWidget: (context, url, error) =>
+                const Icon(Icons.error),
               ),
             ),
           ),
 
+          // ── LIKE / DATUM / KOMENTAR ─────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
             child: Row(
               children: [
                 GestureDetector(
@@ -288,29 +302,38 @@ class _PostTileState extends State<PostTile> {
                 const SizedBox(width: 5),
                 Text(
                   widget.post.likes.length.toString(),
-                  style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary, fontSize: 12),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: 12),
                 ),
                 const Spacer(),
                 Text(
                   widget.post.timeStamp.toString(),
-                  style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary, fontSize: 11),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: 11),
                 ),
                 const SizedBox(width: 12),
                 GestureDetector(
                   onTap: openNewCommentBox,
-                  child: Icon(Icons.comment, color: Theme.of(context).colorScheme.inversePrimary),
+                  child: Icon(Icons.comment,
+                      color: Theme.of(context).colorScheme.inversePrimary),
                 ),
                 const SizedBox(width: 4),
                 Text(
                   widget.post.comments.length.toString(),
-                  style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary, fontSize: 12),
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.inversePrimary,
+                      fontSize: 12),
                 ),
               ],
             ),
           ),
 
+          // ── CAPTION ─────────────────────────────────────────────
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            padding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             child: RichText(
               text: TextSpan(
                 children: [
@@ -323,13 +346,50 @@ class _PostTileState extends State<PostTile> {
                   ),
                   TextSpan(
                     text: widget.post.text,
-                    style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
+                    style: TextStyle(
+                        color:
+                        Theme.of(context).colorScheme.inversePrimary),
                   ),
                 ],
               ),
             ),
           ),
 
+          // ── LOKACIJA ────────────────────────────────────────────
+          if (widget.post.location != null)
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, bottom: 6, top: 2),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.location_on_outlined,
+                    size: 14,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .inversePrimary
+                        .withOpacity(0.6),
+                  ),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      widget.post.location!.displayName,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .inversePrimary
+                            .withOpacity(0.6),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+          // ── KOMENTARI ───────────────────────────────────────────
           BlocBuilder<PostCubit, PostState>(
             builder: (context, state) {
               if (state is PostLoaded) {
@@ -343,7 +403,10 @@ class _PostTileState extends State<PostTile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Divider(
-                      color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.2),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .inversePrimary
+                          .withOpacity(0.2),
                       thickness: 1,
                       indent: 16,
                       endIndent: 16,
@@ -355,7 +418,10 @@ class _PostTileState extends State<PostTile> {
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.inversePrimary.withOpacity(0.5),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .inversePrimary
+                              .withOpacity(0.5),
                         ),
                       ),
                     ),

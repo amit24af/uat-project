@@ -24,5 +24,5 @@ class PostLocation {
   }
 
   @override
-  String toString() => '$displayName ($latitude, $longitude)';
+  String toString() => displayName;
 }

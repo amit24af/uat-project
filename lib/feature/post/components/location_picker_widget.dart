@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-
 import '../domain/entities/post_location.dart';
+import '../services/location_service.dart';
 
-class LocationPickerWidget extends StatelessWidget {
+class LocationPickerWidget extends StatefulWidget {
   final PostLocation? selectedLocation;
   final bool isLoading;
   final VoidCallback onUseMyLocation;
-  final VoidCallback onEnterManually;
+  final void Function(PostLocation) onLocationSelected;
   final VoidCallback onRemove;
 
   const LocationPickerWidget({
@@ -14,47 +14,53 @@ class LocationPickerWidget extends StatelessWidget {
     required this.selectedLocation,
     required this.isLoading,
     required this.onUseMyLocation,
-    required this.onEnterManually,
+    required this.onLocationSelected,
     required this.onRemove,
   });
 
   @override
-  Widget build(BuildContext context) {
-    if (isLoading) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 18,
-              height: 18,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Text(
-              "Getting location...",
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.inversePrimary,
-              ),
-            ),
-          ],
-        ),
-      );
-    }
+  State<LocationPickerWidget> createState() => _LocationPickerWidgetState();
+}
 
-    if (selectedLocation != null) {
+class _LocationPickerWidgetState extends State<LocationPickerWidget> {
+  final _searchController = TextEditingController();
+  final _locationService = LocationService();
+  List<PostLocation> _suggestions = [];
+  bool _isSearching = false;
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onSearchChanged(String value) async {
+    if (value.trim().length < 2) {
+      setState(() => _suggestions = []);
+      return;
+    }
+    setState(() => _isSearching = true);
+    final results = await _locationService.searchLocations(value);
+    setState(() {
+      _suggestions = results;
+      _isSearching = false;
+    });
+  }
+
+  void _selectSuggestion(PostLocation location) {
+    setState(() => _suggestions = []);
+    _searchController.clear();
+    widget.onLocationSelected(location);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.selectedLocation != null) {
       return Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
-          borderRadius: BorderRadius.circular(16),
+          color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
           ),
@@ -62,114 +68,108 @@ class LocationPickerWidget extends StatelessWidget {
         child: Row(
           children: [
             Icon(Icons.location_on,
-                color: Theme.of(context).colorScheme.primary, size: 20),
-            const SizedBox(width: 10),
+                color: Theme.of(context).colorScheme.primary, size: 18),
+            const SizedBox(width: 8),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    selectedLocation!.displayName,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
-                  ),
-                  if (selectedLocation!.latitude != 0)
-                    Text(
-                      "${selectedLocation!.latitude.toStringAsFixed(4)}, "
-                          "${selectedLocation!.longitude.toStringAsFixed(4)}",
-                      style: TextStyle(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .inversePrimary
-                            .withOpacity(0.4),
-                        fontSize: 11,
-                      ),
-                    ),
-                ],
+              child: Text(
+                widget.selectedLocation!.displayName,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.inversePrimary,
+                  fontSize: 13,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             GestureDetector(
-              onTap: onRemove,
-              child: Icon(
-                Icons.close,
-                color: Theme.of(context)
-                    .colorScheme
-                    .inversePrimary
-                    .withOpacity(0.4),
-                size: 18,
-              ),
+              onTap: widget.onRemove,
+              child: Icon(Icons.close,
+                  size: 18,
+                  color: Theme.of(context).colorScheme.inversePrimary),
             ),
           ],
         ),
       );
     }
 
-    return Row(
+    return Column(
       children: [
-        Expanded(
-          child: GestureDetector(
-            onTap: onUseMyLocation,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+        Row(
+          children: [
+            Expanded(
+              child: TextField(
+                controller: _searchController,
+                onChanged: _onSearchChanged,
+                decoration: InputDecoration(
+                  hintText: "Pretraži lokaciju...",
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  suffixIcon: _isSearching
+                      ? const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  )
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 ),
               ),
-              child: Column(
-                children: [
-                  Icon(Icons.my_location,
-                      color: Theme.of(context).colorScheme.primary, size: 24),
-                  const SizedBox(height: 6),
-                  Text(
-                    "Use my location",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+            ),
+            const SizedBox(width: 8),
+            widget.isLoading
+                ? const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+                : IconButton(
+              onPressed: widget.onUseMyLocation,
+              icon: const Icon(Icons.my_location),
+              tooltip: "Moja lokacija",
+            ),
+          ],
+        ),
+        if (_suggestions.isNotEmpty)
+          Container(
+            margin: const EdgeInsets.only(top: 4),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.surface,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(
+                color:
+                Theme.of(context).colorScheme.outline.withOpacity(0.3),
               ),
             ),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: GestureDetector(
-            onTap: onEnterManually,
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.08),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(
-                  color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                ),
+            child: ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _suggestions.length,
+              separatorBuilder: (_, __) => Divider(
+                height: 1,
+                color: Theme.of(context)
+                    .colorScheme
+                    .outline
+                    .withOpacity(0.2),
               ),
-              child: Column(
-                children: [
-                  Icon(Icons.edit_location_alt,
-                      color: Theme.of(context).colorScheme.primary, size: 24),
-                  const SizedBox(height: 6),
-                  Text(
-                    "Enter manually",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.inversePrimary,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
+              itemBuilder: (context, index) {
+                final s = _suggestions[index];
+                return ListTile(
+                  dense: true,
+                  leading:
+                  const Icon(Icons.location_on_outlined, size: 18),
+                  title:
+                  Text(s.displayName, style: const TextStyle(fontSize: 13)),
+                  onTap: () => _selectSuggestion(s),
+                );
+              },
             ),
           ),
-        ),
       ],
     );
   }
