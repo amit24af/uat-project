@@ -137,6 +137,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         "Bio",
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.inversePrimary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
                         ),
                       ),
                     ],

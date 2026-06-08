@@ -8,6 +8,7 @@ import 'package:uat_project/feature/auth/presentation/components/loading.dart';
 import 'package:uat_project/feature/auth/presentation/components/my_textfield.dart';
 import 'package:uat_project/feature/profile/presentation/cubits/profile_states.dart';
 
+import '../../../auth/presentation/components/my_button.dart';
 import '../../domain/entities/profile_user.dart';
 import '../cubits/profile_cubit.dart';
 
@@ -111,21 +112,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
             )
           ),
           const SizedBox(height: 25),
-          Center(child: MaterialButton(
-            onPressed: pickImage,
-              color: Theme.of(context).colorScheme.tertiary,
-              child: Text(
-                "Select Profile Picture",
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
-              ),
-          )
+          Center(child: MyButton(
+            onTap: pickImage,
+            text: "Select Profile Picture",
+          ),
           ),
           const SizedBox(height: 25),
           Text("Biography", style: TextStyle(
-            color: Theme
-                .of(context)
-                .colorScheme
-                .tertiary,
+            color: Theme.of(context).colorScheme.inversePrimary,
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
           ),),
           const SizedBox(height: 25),
           Padding(

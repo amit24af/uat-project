@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../auth/presentation/components/my_textfield.dart';
 import '../domain/entities/post_location.dart';
 import '../services/location_service.dart';
 
@@ -59,10 +60,10 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+          color: Theme.of(context).colorScheme.secondary,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.primary,
           ),
         ),
         child: Row(
@@ -97,28 +98,22 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
         Row(
           children: [
             Expanded(
-              child: TextField(
+              child: MyTextField(
                 controller: _searchController,
+                hintText: "Type location...",
+                obscureText: false,
                 onChanged: _onSearchChanged,
-                decoration: InputDecoration(
-                  hintText: "Pretraži lokaciju...",
-                  prefixIcon: const Icon(Icons.search, size: 20),
-                  suffixIcon: _isSearching
-                      ? const Padding(
-                    padding: EdgeInsets.all(10),
-                    child: SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  )
-                      : null,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
+                prefixIcon: const Icon(Icons.search, size: 20),
+                suffixIcon: _isSearching
+                    ? const Padding(
+                  padding: EdgeInsets.all(10),
+                  child: SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
                   ),
-                  contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                ),
+                )
+                    : null,
               ),
             ),
             const SizedBox(width: 8),
@@ -131,7 +126,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                 : IconButton(
               onPressed: widget.onUseMyLocation,
               icon: const Icon(Icons.my_location),
-              tooltip: "Moja lokacija",
+              tooltip: "My location",
             ),
           ],
         ),
@@ -143,7 +138,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color:
-                Theme.of(context).colorScheme.outline.withOpacity(0.3),
+                Theme.of(context).colorScheme.tertiary,
               ),
             ),
             child: ListView.separated(
@@ -159,13 +154,14 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
               ),
               itemBuilder: (context, index) {
                 final s = _suggestions[index];
-                return ListTile(
-                  dense: true,
-                  leading:
-                  const Icon(Icons.location_on_outlined, size: 18),
-                  title:
-                  Text(s.displayName, style: const TextStyle(fontSize: 13)),
-                  onTap: () => _selectSuggestion(s),
+                return Material(
+                  color: Colors.transparent,
+                  child: ListTile(
+                    dense: true,
+                    leading: const Icon(Icons.location_on_outlined, size: 18),
+                    title: Text(s.displayName, style: const TextStyle(fontSize: 13)),
+                    onTap: () => _selectSuggestion(s),
+                  ),
                 );
               },
             ),
