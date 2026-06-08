@@ -1,10 +1,8 @@
-# ✈️ Travel Blog — Flutter iOS App
-
 > A feature-rich mobile travel blog built with Flutter, where users can share their travel experiences, follow other explorers, and discover the world through photos and stories.
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Features](#-features)
 - [Tech Stack](#-tech-stack)
