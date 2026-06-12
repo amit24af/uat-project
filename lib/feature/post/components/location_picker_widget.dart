@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../auth/presentation/components/my_textfield.dart';
 import '../domain/entities/post_location.dart';
 import '../services/location_service.dart';
 
@@ -60,10 +59,10 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
+          color: Theme.of(context).colorScheme.secondary.withOpacity(0.1),
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: Theme.of(context).colorScheme.primary,
+            color: Theme.of(context).colorScheme.primary.withOpacity(0.3),
           ),
         ),
         child: Row(
@@ -98,22 +97,28 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
         Row(
           children: [
             Expanded(
-              child: MyTextField(
+              child: TextField(
                 controller: _searchController,
-                hintText: "Type location...",
-                obscureText: false,
                 onChanged: _onSearchChanged,
-                prefixIcon: const Icon(Icons.search, size: 20),
-                suffixIcon: _isSearching
-                    ? const Padding(
-                  padding: EdgeInsets.all(10),
-                  child: SizedBox(
-                    width: 16,
-                    height: 16,
-                    child: CircularProgressIndicator(strokeWidth: 2),
+                decoration: InputDecoration(
+                  hintText: "Pretraži lokaciju...",
+                  prefixIcon: const Icon(Icons.search, size: 20),
+                  suffixIcon: _isSearching
+                      ? const Padding(
+                    padding: EdgeInsets.all(10),
+                    child: SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  )
+                      : null,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                )
-                    : null,
+                  contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
               ),
             ),
             const SizedBox(width: 8),
@@ -126,7 +131,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
                 : IconButton(
               onPressed: widget.onUseMyLocation,
               icon: const Icon(Icons.my_location),
-              tooltip: "My location",
+              tooltip: "Moja lokacija",
             ),
           ],
         ),
@@ -138,7 +143,7 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
                 color:
-                Theme.of(context).colorScheme.tertiary,
+                Theme.of(context).colorScheme.outline.withOpacity(0.3),
               ),
             ),
             child: ListView.separated(
@@ -154,14 +159,13 @@ class _LocationPickerWidgetState extends State<LocationPickerWidget> {
               ),
               itemBuilder: (context, index) {
                 final s = _suggestions[index];
-                return Material(
-                  color: Colors.transparent,
-                  child: ListTile(
-                    dense: true,
-                    leading: const Icon(Icons.location_on_outlined, size: 18),
-                    title: Text(s.displayName, style: const TextStyle(fontSize: 13)),
-                    onTap: () => _selectSuggestion(s),
-                  ),
+                return ListTile(
+                  dense: true,
+                  leading:
+                  const Icon(Icons.location_on_outlined, size: 18),
+                  title:
+                  Text(s.displayName, style: const TextStyle(fontSize: 13)),
+                  onTap: () => _selectSuggestion(s),
                 );
               },
             ),

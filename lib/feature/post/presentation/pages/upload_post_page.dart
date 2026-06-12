@@ -7,7 +7,6 @@ import 'package:uat_project/feature/post/domain/entities/post.dart';
 import 'package:uat_project/feature/post/presentation/cubits/post_cubit.dart';
 import 'package:uat_project/feature/post/presentation/cubits/post_states.dart';
 import '../../../auth/domain/entities/app_user.dart';
-import '../../../auth/presentation/components/my_button.dart';
 import '../../../auth/presentation/components/my_textfield.dart';
 import '../../components/location_picker_widget.dart';
 import '../../domain/entities/post_location.dart';
@@ -117,7 +116,7 @@ class _UploadPostPageState extends State<UploadPostPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("CREATE POST"),
-        foregroundColor: Theme.of(context).colorScheme.tertiary,
+        foregroundColor: Theme.of(context).colorScheme.primary,
         actions: [
           IconButton(onPressed: uploadPost, icon: const Icon(Icons.upload)),
         ],
@@ -137,11 +136,19 @@ class _UploadPostPageState extends State<UploadPostPage> {
                 ),
               ),
             const SizedBox(height: 12),
-            MyButton(
-            onTap: pickImage,
-            text: imagePickedFile == null ? "CHOOSE IMAGE" : "CHANGE IMAGE",
+            MaterialButton(
+              onPressed: pickImage,
+              color: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                imagePickedFile == null ? "CHOOSE IMAGE" : "CHANGE IMAGE",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
             ),
-
             const SizedBox(height: 20),
             MyTextField(
               controller: textController,

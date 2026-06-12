@@ -5,15 +5,13 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:uat_project/feature/auth/data/firebase_auth_repo.dart';
 import 'package:uat_project/feature/auth/presentation/components/loading.dart';
 import 'package:uat_project/feature/auth/presentation/cubits/auth_states.dart';
-import 'package:uat_project/feature/auth/presentation/pages/login_page.dart';
 import 'package:uat_project/feature/search/data/firebase_search_repo.dart';
-import 'package:uat_project/feature/themes/light_mode.dart';
+
 import 'package:uat_project/feature/themes/theme_cubit.dart';
 import 'package:uat_project/firebase_options.dart';
 
 import 'feature/auth/presentation/cubits/auth_cubit.dart';
 import 'feature/auth/presentation/pages/auth_page.dart';
-import 'feature/auth/presentation/pages/register_page.dart';
 import 'feature/home/presentation/pages/home_page.dart';
 import 'feature/post/data/firebase_repository.dart';
 import 'feature/post/presentation/cubits/post_cubit.dart';
@@ -21,7 +19,7 @@ import 'feature/profile/data/firebase_profile_repo.dart';
 import 'feature/profile/presentation/cubits/profile_cubit.dart';
 import 'feature/search/presentation/cubits/search_cubit.dart';
 import 'feature/storage/data/firebase_storage_repo.dart';
-import 'feature/themes/dark_mode.dart';
+
 
 void main() async{
   await dotenv.load(fileName: ".env");

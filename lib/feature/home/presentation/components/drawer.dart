@@ -71,20 +71,6 @@ class MyDrawer extends StatelessWidget {
                 ),
 
                 MyDrawerTile(
-                  text: "Weather",
-                  icon: Icons.sunny_snowing,
-                  onTap: () {
-                    Navigator.pop(context);
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => WeatherPage()
-                        )
-                    );
-                  },
-                ),
-
-                MyDrawerTile(
                   text: "Settings",
                   icon: Icons.settings,
                   onTap: () {

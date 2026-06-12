@@ -14,6 +14,22 @@ import '../domain/entities/post.dart';
 import '../presentation/cubits/post_cubit.dart';
 import '../../profile/domain/entities/profile_user.dart';
 
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uat_project/feature/auth/presentation/components/loading.dart';
+import 'package:uat_project/feature/post/components/comment_tile.dart';
+import 'package:uat_project/feature/post/presentation/cubits/post_states.dart';
+import 'package:uat_project/feature/profile/presentation/cubits/profile_cubit.dart';
+import '../../auth/domain/entities/app_user.dart';
+import '../../auth/presentation/components/my_textfield.dart';
+import '../../auth/presentation/cubits/auth_cubit.dart';
+import '../../profile/presentation/pages/profile_page.dart';
+import '../domain/entities/comment.dart';
+import '../domain/entities/post.dart';
+import '../presentation/cubits/post_cubit.dart';
+import '../../profile/domain/entities/profile_user.dart';
+
 
 class PostTile extends StatefulWidget {
   final Post post;
@@ -199,7 +215,7 @@ class _PostTileState extends State<PostTile> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
 
-
+          // ── HEADER: avatar + ime + delete ──────────────────────
           GestureDetector(
             onTap: () => Navigator.push(
               context,
@@ -339,21 +355,20 @@ class _PostTileState extends State<PostTile> {
             ),
           ),
 
-
+          // ── LOKACIJA ────────────────────────────────────────────
           if (widget.post.location != null)
             Padding(
-              padding: EdgeInsets.only(
-                left: MediaQuery.of(context).size.width * 0.05 + 12,
-                right: MediaQuery.of(context).size.width * 0.05 + 12,
-                bottom: 6,
-                top: 2,
-              ),
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, bottom: 6, top: 2),
               child: Row(
                 children: [
                   Icon(
                     Icons.location_on_outlined,
                     size: 14,
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                    color: Theme.of(context)
+                        .colorScheme
+                        .inversePrimary
+                        .withOpacity(0.6),
                   ),
                   const SizedBox(width: 4),
                   Expanded(
@@ -361,7 +376,10 @@ class _PostTileState extends State<PostTile> {
                       widget.post.location!.displayName,
                       style: TextStyle(
                         fontSize: 12,
-                        color: Theme.of(context).colorScheme.inversePrimary,
+                        color: Theme.of(context)
+                            .colorScheme
+                            .inversePrimary
+                            .withOpacity(0.6),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -371,7 +389,7 @@ class _PostTileState extends State<PostTile> {
               ),
             ),
 
-
+          // ── KOMENTARI ───────────────────────────────────────────
           BlocBuilder<PostCubit, PostState>(
             builder: (context, state) {
               if (state is PostLoaded) {
@@ -387,7 +405,8 @@ class _PostTileState extends State<PostTile> {
                     Divider(
                       color: Theme.of(context)
                           .colorScheme
-                          .inversePrimary,
+                          .inversePrimary
+                          .withOpacity(0.2),
                       thickness: 1,
                       indent: 16,
                       endIndent: 16,
@@ -401,7 +420,8 @@ class _PostTileState extends State<PostTile> {
                           fontWeight: FontWeight.w600,
                           color: Theme.of(context)
                               .colorScheme
-                              .inversePrimary,
+                              .inversePrimary
+                              .withOpacity(0.5),
                         ),
                       ),
                     ),
